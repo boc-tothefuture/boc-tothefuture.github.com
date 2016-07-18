@@ -7,8 +7,6 @@ categories: blog
 Time to get those _first post jitters_ out of the way!
 
 # Who is writing this thing?
-![Me](/images/bio-photo.jpg)
-<br>
 For more info on that, [head over to the about page](/about)
 
 # What do you do?
@@ -24,7 +22,7 @@ Glad you asked.
 
 I have lots of thoughts on automating an infrastructure and turning it into a Platform as a Service.
 
-Some topics, I expect to cover in depth:
+Some topics I anticipate covering:
 
 1. Dev Ops
 2. Configuration Management
