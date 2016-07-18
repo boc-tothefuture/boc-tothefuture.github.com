@@ -2,6 +2,7 @@
 title:  "My DevOps Journey"
 date:   2016-07-17 14:31:00 -0400
 categories: devops home_automation
+excerpt: "What drives me to automate and enable DevOps"
 ---
 My DevOps journey began with configuration management and a passion for automation.
 

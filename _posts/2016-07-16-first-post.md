@@ -1,6 +1,7 @@
 ---
 title:  "What is this place all about?"
 date:   2016-07-16 01:11:47 -0500
+excerpt:  "The story behind the blog"
 categories: blog
 ---
 Time to get those _first post jitters_ out of the way!
