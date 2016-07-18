@@ -11,7 +11,7 @@ title                    : "Infrastructure DevOps"
 title_separator          : "-"
 name                     : "Brian O'Connell"
 description              : "Brian O'Connell's thoughts on building a cloud platform using software methodologies"
-url                      : https://boc-tothefuture.github.io/
+url                      : http://localhost:8765/
 baseurl                  :
 gh_repo                  : boc-tothefuture
 teaser                   : # filename of teaser fallback teaser image placed in /images/, .e.g. "500x300.png"
@@ -28,12 +28,6 @@ comments:
     appid                :
     num_posts            : # 5 (default)
     colorscheme          : # "light" (default), "dark"
-
-# SEO Related
-google_site_verification :
-bing_site_verification   : 396E6BA798C2C57C198F6E88DD15779C
-alexa_site_verification  :
-yandex_site_verification :
 
 # Social Sharing
 twitter:
@@ -54,44 +48,11 @@ social:
 analytics:
   provider               : google
   google:
-    tracking_id          : UA-80492189-1
+    tracking_id          : dummy
 
 # Google AdSense
 google_ad_client         :
 google_ad_slot           :
-
-
-# Site Author
-author:
-  name             : "Brian O'Connell"
-  avatar           : "bio-photo.jpg"
-  bio              : "Building a Platfrom as a Service using DevOps Principals"
-  location         : "Raleigh, NC"
-  email            :
-  uri              :
-  bitbucket        :
-  codepen          :
-  dribbble         :
-  flickr           :
-  facebook         :
-  foursquare       :
-  github           : boc-tothefuture
-  google_plus      :
-  keybase          :
-  instagram        :
-  lastfm           :
-  linkedin         : broconne
-  pinterest        :
-  soundcloud       :
-  stackoverflow    : # http://stackoverflow.com/users/123456/username
-  steam            :
-  tumblr           :
-  twitter          : boc_tothefuture
-  vine             :
-  weibo            :
-  xing             :
-  youtube          :
-
 
 # Reading Files
 include:
@@ -206,16 +167,3 @@ compress_html:
   clippings: all
   ignore:
     envs: development
-
-defaults:
-  # _posts
-  - scope:
-      path: ""
-      type: posts
-    values:
-      layout: single
-      author_profile: true
-      read_time: true
-      comments: true
-      share: true
-      related: true
