@@ -15,7 +15,7 @@ I work on the cloud computing platform that powers some of the worlds most popul
 ![golf ball](/images/golf-ball.png) ![tennis ball](/images/tennis-ball.png)
 <br>
 
-Some of these web sites include [The Masters](http://www.masters.com), [Wimbledon](http://www.wimbledon.com), [US Open](www.usopen.org), [Australian Open](www.AustralianOpen.com), [Roland Garros](www.rolandgarros.com).
+Some of these web sites include [The Masters](http://www.masters.com), [Wimbledon](http://www.wimbledon.com), [US Open](http://www.usopen.org), [Australian Open](http://www.AustralianOpen.com), [Roland Garros](http://www.rolandgarros.com).
 
 # What are we going to talk about?
 Glad you asked.
