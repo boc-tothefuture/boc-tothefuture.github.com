@@ -25,7 +25,7 @@ Starting around 2013 I began experimenting with applying DevOps principals and t
 
 **In summary, if it is about applying DevOps in the real world to an infrastructure I want to talk about it.**
 
-I have led the team the has transformed the infrastructure for sites like [The Masters](http://www.masters.com), [Wimbledon](http://www.wimbledon.com), [US Open](www.usopen.org), [Australian Open](www.AustralianOpen.com), [Roland Garros](www.rolandgarros.com), and the [Tony Awards](www.tonyawards.com) from a traditional infrastructure to an automated hybrid cloud.  
+I have led the team the has transformed the infrastructure for sites like [The Masters](http://www.masters.com), [Wimbledon](http://www.wimbledon.com), [US Open](http://www.usopen.org), [Australian Open](http://www.AustralianOpen.com), [Roland Garros](http://www.rolandgarros.com), and the [Tony Awards](http://www.tonyawards.com) from a traditional infrastructure to an automated hybrid cloud.  
 
 **Wondering who is slinging this markdown?**
 <br>
