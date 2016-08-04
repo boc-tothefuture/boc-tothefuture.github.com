@@ -2,7 +2,7 @@
 title:  "Services, not scripts"
 date:   2016-08-02 12:58:00 -0400
 categories: devops services chef
-excerpt: "Use native operating system service mechanisms."
+excerpt: "Use native operating system service mechanisms with Chef."
 ---
 <br>
 ![Services](/images/gears.jpg)
