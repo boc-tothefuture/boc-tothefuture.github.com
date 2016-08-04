@@ -61,3 +61,6 @@ The merge request will look a bit like this.
 ![Services](/images/gitlab-labels-on-mr.jpg)
 
  Once someone does an initial review, they may add additional labels such as 'Blocked', 'Needs Changes', or 'Needs Discussion'.  After the minimum number of reviewers have looked at the change, the last reviewer will removed the 'Needs Review' label and either merge the MR or add a 'Ready to Deploy' label so that it can be merged at the appropriate time.
+
+# How does this help us?
+GitLab displays labels when viewing all open MRs.  This makes it to quickly glance at all MRs that need some form of attention, generally this is those with a 'Needs Review' tag.  Prior to implementing this labeling system I would have to open every MR and read the comments to understand the state.  Now I can direct my attention to only those items that need it. 
