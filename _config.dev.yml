@@ -11,7 +11,7 @@ title                    : "Infrastructure DevOps"
 title_separator          : "-"
 name                     : "Brian O'Connell"
 description              : "Brian O'Connell's thoughts on building a cloud platform using software methodologies"
-url                      : http://localhost:8765/
+url                      : http://bocm83.raleigh.ibm.com:8765/
 baseurl                  :
 gh_repo                  : boc-tothefuture
 teaser                   : # filename of teaser fallback teaser image placed in /images/, .e.g. "500x300.png"
