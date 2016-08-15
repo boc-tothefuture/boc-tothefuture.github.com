@@ -1,8 +1,8 @@
 ---
-title:  "Cloudant for news"
+title:  "Dynamic GitHub Pages"
 date:   2016-08-15 12:00:00 -0400
 categories: blog cloudant bluemix
-excerpt: "Use Cloudant in Bluemix for dynamic news section of a blog"
+excerpt: "Use Cloudant in Bluemix for dynamic news section of a GitHub pages Blog"
 cloudant_cors:
   - url: news/cloudant_cors.jpg
     image_path: news/cloudant_cors.jpg
