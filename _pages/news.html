@@ -1,0 +1,69 @@
+---
+title: "Infrastruture DevOps News"
+layout: single
+permalink: /news/
+author_profile: true
+custom_js:
+- jquery-1.12.4.min
+- jquery-dateFormat.min
+---
+
+<br>
+<div id="result"></div>
+
+<script>
+
+$.ajaxSetup({
+    username: 'ichetteedieringesomenewh',
+    password: 'ec4b79f402fc8fc9c5670b96ef1359c2d8342a6c',
+    xhrFields: {
+   withCredentials: true
+},
+crossDomain: true
+});
+
+var query = {
+  "selector": {
+    "timestamp": {
+      "$gt": 0
+    }
+  },
+  "fields": [
+    "title",
+    "link",
+    "timestamp",
+    "excerpt"
+  ],
+  "sort": [
+    {
+      "timestamp": "desc"
+    }
+  ]
+}
+
+$.ajax({
+  type: "POST",
+  url: "https://2619ca16-f337-42b9-b353-08009fcf31d7-bluemix.cloudant.com/blog_news/_find?limit=10",
+  data: JSON.stringify( query ),
+  contentType: "application/json; charset=utf-8",
+  dataType: "json",
+  success: function(data) {
+      $( "#result" ).empty()
+      $(data.docs).each(function (index, value) {
+        console.log(value)
+        $('<a>',{
+          text: value.title,
+          href: value.link
+        }).appendTo( "#result" );
+        $('<br>').appendTo("#result")
+        $( "#result" ).append( value.excerpt );
+        $('<br>').appendTo("#result")
+        $( "#result" ).append( "<i>" +  DateFormat.format.prettyDate(new Date(1000*value.timestamp).getTime(), "dd/MM/yyyy") + "</i>" )
+        $('<br>').appendTo("#result")
+        $('<br>').appendTo("#result")
+          //$( "#result" ).append( value.title );
+      });
+  }
+});
+
+</script>
