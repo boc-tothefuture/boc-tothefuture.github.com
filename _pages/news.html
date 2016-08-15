@@ -13,15 +13,6 @@ custom_js:
 
 <script>
 
-$.ajaxSetup({
-    username: 'ichetteedieringesomenewh',
-    password: 'ec4b79f402fc8fc9c5670b96ef1359c2d8342a6c',
-    xhrFields: {
-   withCredentials: true
-},
-crossDomain: true
-});
-
 var query = {
   "selector": {
     "timestamp": {
@@ -44,6 +35,7 @@ var query = {
 $.ajax({
   type: "POST",
   url: "https://2619ca16-f337-42b9-b353-08009fcf31d7-bluemix.cloudant.com/blog_news/_find?limit=10",
+  headers: {"Authorization": "Basic aWNoZXR0ZWVkaWVyaW5nZXNvbWVuZXdoOmVjNGI3OWY0MDJmYzhmYzljNTY3MGI5NmVmMTM1OWMyZDgzNDJhNmM="},
   data: JSON.stringify( query ),
   contentType: "application/json; charset=utf-8",
   dataType: "json",
@@ -61,7 +53,6 @@ $.ajax({
         $( "#result" ).append( "<i>" +  DateFormat.format.prettyDate(new Date(1000*value.timestamp).getTime(), "dd/MM/yyyy") + "</i>" )
         $('<br>').appendTo("#result")
         $('<br>').appendTo("#result")
-          //$( "#result" ).append( value.title );
       });
   }
 });
