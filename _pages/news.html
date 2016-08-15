@@ -30,7 +30,7 @@ var query = {
       "timestamp": "desc"
     }
   ]
-}
+};
 
 $.ajax({
   type: "POST",
@@ -40,19 +40,19 @@ $.ajax({
   contentType: "application/json; charset=utf-8",
   dataType: "json",
   success: function(data) {
-      $( "#result" ).empty()
+      $( "#result" ).empty();
       $(data.docs).each(function (index, value) {
         console.log(value)
         $('<a>',{
           text: value.title,
           href: value.link
         }).appendTo( "#result" );
-        $('<br>').appendTo("#result")
+        $('<br>').appendTo("#result");
         $( "#result" ).append( value.excerpt );
-        $('<br>').appendTo("#result")
-        $( "#result" ).append( "<i>" +  DateFormat.format.prettyDate(new Date(1000*value.timestamp).getTime(), "dd/MM/yyyy") + "</i>" )
-        $('<br>').appendTo("#result")
-        $('<br>').appendTo("#result")
+        $('<br>').appendTo("#result");
+        $( "#result" ).append( "<i>" +  DateFormat.format.prettyDate(new Date(1000*value.timestamp).getTime(), "dd/MM/yyyy") + "</i>" );
+        $('<br>').appendTo("#result");
+        $('<br>').appendTo("#result");
       });
   }
 });
