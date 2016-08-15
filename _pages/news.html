@@ -42,7 +42,6 @@ $.ajax({
   success: function(data) {
       $( "#result" ).empty();
       $(data.docs).each(function (index, value) {
-        console.log(value)
         $('<a>',{
           text: value.title,
           href: value.link
