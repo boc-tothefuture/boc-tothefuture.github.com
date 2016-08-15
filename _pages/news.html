@@ -49,7 +49,7 @@ $.ajax({
         $('<br>').appendTo("#result");
         $( "#result" ).append( value.excerpt );
         $('<br>').appendTo("#result");
-        $( "#result" ).append( "<i>" +  DateFormat.format.prettyDate(new Date(1000*value.timestamp).getTime(), "dd/MM/yyyy") + "</i>" );
+        $( "#result" ).append( "<i>" +  DateFormat.format.prettyDate(new Date(1000*value.timestamp).getTime()) + "</i>" );
         $('<br>').appendTo("#result");
         $('<br>').appendTo("#result");
       });
