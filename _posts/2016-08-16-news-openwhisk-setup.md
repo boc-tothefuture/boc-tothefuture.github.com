@@ -1,5 +1,5 @@
 ---
-title:  "Openwhisk Setup"
+title:  "Mixing in Openwhisk"
 date:   2016-08-15 17:00:00 -0400
 categories: blog cloudant bluemix Openwhisk
 excerpt: "Setup Openwhisk"
@@ -26,7 +26,7 @@ whisk_inserted_news:
 
 # Openwhisk
 
-This is the third article in a series on how to use [GitHub pages](https://pages.github.com/) (the service that hosts this blog) and Cloudant on the [BlueMix PaaS](http://www.ibm.com/BlueMix) to create an automatically updating news section for a blog. This post will explore how to setup Openwhisk, which will be configured to automatically update the news page.
+This is the third article in a series on how to use [GitHub pages](https://pages.github.com/) (the service that hosts this blog) and Cloudant on the [BlueMix PaaS](http://www.ibm.com/BlueMix) to create an automatically updating news section for a blog. This post will explore how to setup Openwhisk which will be configured to push updates to the news page.
 
 ## Previous Articles
 
@@ -66,8 +66,8 @@ Store the password for this user somewhere - you can't retrieve it later.
 
 
 # Bind Openwhisk to Cloudant
-Once the new user is created follow [this instructions](https://new-console.ng.bluemix.net/docs/openwhisk/openwhisk_catalog.html#openwhisk_catalog_cloudant_outside) to bind
-the username and password to the new user that was created.  Replace the 'MYUSERNAME', 'MYPASSWORD' with the key, password for the new user that was created.  Replace 'MYCLOUDANTACCOUNT.cloudant.com' with the cloudant hostname you created in the previous posts.
+Once the new user is created follow [these instructions](https://new-console.ng.bluemix.net/docs/openwhisk/openwhisk_catalog.html#openwhisk_catalog_cloudant_outside) to bind
+the username and password to the new user that was created.  Replace 'MYUSERNAME', 'MYPASSWORD' with the key and password for the new user that was created.  Replace 'MYCLOUDANTACCOUNT.cloudant.com' with the Cloudant hostname you provided by Bluemix.
 
 {% highlight shell %}
 ./wsk package bind /whisk.system/cloudant blog_news -p username 'MYUSERNAME' -p password 'MYPASSWORD' -p host 'MYCLOUDANTACCOUNT.cloudant.com'
@@ -98,6 +98,8 @@ Result
 
 After executing that command the sample news item should show up in the blog's news article list.
 {% include gallery id="whisk_inserted_news" caption="News items inserted into Cloudant by Openwhisk"%}
+
+You can now use the command line Openwhisk to push news articles directly to your blog without having to edit database documents directly on Cloudant.
 
 
 # Resources
