@@ -35,9 +35,9 @@ This is the forth article in a series on how to use [GitHub pages](https://pages
 
 ## Previous Articles
 
-1. [Setting up Cloudant]({% post_url 2016-08-10-news-setting-up-cloudant %}).
-2. [Dynamic GitHub pages]({% post_url 2016-08-10-news-setting-up-cloudant %}).
-3. [Mixing in Openwhisk]({% post_url 2016-08-16-news-openwhisk-setup %}).
+1. [Setting up Cloudant]({% post_url 2016-08-10-news-setting-up-cloudant %})
+2. [Dynamic GitHub pages]({% post_url 2016-08-10-news-setting-up-cloudant %})
+3. [Mixing in Openwhisk]({% post_url 2016-08-16-news-openwhisk-setup %})
 
 <br>
 
@@ -72,20 +72,23 @@ Look what happens when we call the same Openwhisk action twice with the same val
 }
 {% endhighlight %}
 
+
+Both requests return OK and duplicate entries exist on the news page.
+
 {% include gallery id="duplicate_posts" caption="News page with duplicate posts" %}
 
 
 ## Steps to ensure unique articles
 
-1. Create a Cloudant index on the link field.
+1. Create a Cloudant index on the link field
 2. Filter news articles with links that already exist in Cloudant
-3. Insert filtered news articles.
+3. Insert filtered news articles
 
 <br>
 
 # Another Cloudant index
 
-Creating the initial Cloudant index was described in detail in [this post]({% post_url 2016-08-10-news-setting-up-cloudant %}).  To create another index open up the Cloudant portal, select Databases from the left navigation section and then select your blog news database. Select the plus sign next to Design Documents then select query index.
+Creating the initial Cloudant index was described in detail in [this post]({% post_url 2016-08-10-news-setting-up-cloudant %}).  To create another index open up the Cloudant portal, select Databases from the left navigation section and then select your blog news database. Select the plus sign next to Design Documents then select query indexes.
 {% include gallery id="cloudant_index" caption="Create a new query index" %}
 
 In the next screen you can create your index.  Unlike the previous index, this time we want to index the link of the news articles so we can make sure all news artciles are unique. From the supplied default index example in cloudant replace 'foo' with 'link' and click create index.
@@ -94,7 +97,7 @@ In the next screen you can create your index.  Unlike the previous index, this t
 With the index created, Cloudant can now be quickly queried to see if a link already exists.
 
 # Filter news articles
-A custom Openwhisk action will be used to filter news articles to ensure they are unique.  This filter will be written in Javascript.
+A custom Openwhisk action will be used to filter news articles to ensure uniqueness.  This filter will be written in Javascript.
 
 ## Create a file called insert_article.js
 {% highlight shell %}
@@ -171,7 +174,7 @@ The nesting of the javascript makes this action look complicated, but the logic 
 
 1. Action parameters are passed in with the params object.  This action uses title, link, excerpt and timestamp.
 2. Use an asynchronous whisk action to query Cloudant for any documents containing the link passed in as a parameter.
-3. If the results set contain 1 or more documents, end the Openwhisk chain with a call to whisk.done.  Otherwise invoke another asynchronous Cloudant whisk action to insert the article.
+3. If the results set contains 1 or more documents, end the Openwhisk chain with a call to whisk.done.  Otherwise invoke another asynchronous Cloudant whisk action to insert the article.
 4. Execute a whisk.done call after adding the article to Cloudant.
 
 
@@ -181,17 +184,18 @@ The nesting of the javascript makes this action look complicated, but the logic 
 ok: created action insert_article
 {% endhighlight %}
 
+<br>
 
 # Executing Openwhisk action
 
 {% highlight shell %}
 ./wsk action invoke --blocking insert_article --param link 'https://foo.bar/' --param title 'Openwhisk test' --param excerpt 'Testing Openwhisk' --param timestamp '1471399024'
-ok: invoked /boc@us.ibm.com_blog/insert_article with id 00fe0d5d634c402ca918ab273ffc8a80
+ok: invoked /user@us.ibm.com_blog/insert_article with id 00fe0d5d634c402ca918ab273ffc8a80
 {
-    "namespace": "boc@us.ibm.com",
+    "namespace": "user@us.ibm.com",
     "name": "insert_article",
     "version": "0.0.1",
-    "subject": "boc@us.ibm.com",
+    "subject": "user@us.ibm.com",
     "activationId": "00fe0d5d634c402ca918ab273ffc8a80",
     "start": 1471440958662,
     "end": 1471440960573,
@@ -203,13 +207,13 @@ ok: invoked /boc@us.ibm.com_blog/insert_article with id 00fe0d5d634c402ca918ab27
         }
     }
 }
-boc@bocm83:~/wsk$ ./wsk action invoke --blocking insert_article --param link 'https://foo.bar/' --param title 'Openwhisk test' --param excerpt 'Testing Openwhisk' --param timestamp '1471399024'
-ok: invoked /boc@us.ibm.com_blog/insert_article with id c72efe4019f8444590dbb6826a75b6e9
+user@userm83:~/wsk$ ./wsk action invoke --blocking insert_article --param link 'https://foo.bar/' --param title 'Openwhisk test' --param excerpt 'Testing Openwhisk' --param timestamp '1471399024'
+ok: invoked /user@us.ibm.com_blog/insert_article with id c72efe4019f8444590dbb6826a75b6e9
 {
-    "namespace": "boc@us.ibm.com",
+    "namespace": "user@us.ibm.com",
     "name": "insert_article",
     "version": "0.0.1",
-    "subject": "boc@us.ibm.com",
+    "subject": "user@us.ibm.com",
     "activationId": "c72efe4019f8444590dbb6826a75b6e9",
     "start": 1471440968075,
     "end": 1471440968229,
