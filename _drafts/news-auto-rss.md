@@ -37,108 +37,147 @@ This post will tie all the work of the previous posts together resulting in a ne
 
 ## Remaining Steps
 
-1. Create Openwhisk action to parse RSS feeds and invoked insert article action
-2. Configure timer to periodically invoke RSS feed action
+1. Create Openwhisk action to parse RSS feeds
+2. Create Openwhisk action to parse article description from meta tags and invoke insert article whisk action
+3. Configure a timer to periodically invoke RSS feed action
 
 <br>
 
 # Parsing RSS Feeds
 
-Creating the initial Cloudant index was described in detail in [this post]({% post_url 2016-08-10-news-setting-up-cloudant %}).  To create another index open up the Cloudant portal, select Databases from the left navigation section and then select your blog news database. Select the plus sign next to Design Documents then select query indexes.
-{% include gallery id="cloudant_index" caption="Create a new query index" %}
+Creating the first Openwhisk action was described in detail in [this post]({% post_url 2016-08-17-news-openwhisk-uniq %}).  In this post we will create another Openwhisk action that will trigger the insert_article action once for every article in the RSS feed.
 
-In the next screen you can create your index.  Unlike the previous index, this time we want to index the link of the news articles so we can make sure all news artciles are unique. From the supplied default index example in cloudant replace 'foo' with 'link' and click create index.
-{% include gallery id="cloudant_create_index" caption="Link index creation" %}
+## RSS Action
 
-With the index created, Cloudant can now be quickly queried to see if a link already exists.
+The RSS action does the following
 
-# Filter news articles
-A custom Openwhisk action will be used to filter news articles to ensure uniqueness.  This filter will be written in Javascript.
+1. Downloads and parses the RSS feed from the supplied URL.
+2. Extracts the title, link and calculates a timestamp
+3. Invokes the append_article_description action to create an article extract
 
-## Create a file called insert_article.js
-{% highlight shell %}
-vi insert_article.js
-{% endhighlight %}
+The contents of the rss action in its entirety:
 
-The content of the insert_article action in its entirety
 {% highlight javascript %}
-function main(params) {
+// Request module is used to download RSS feed
+var request = require('request');
 
-  whisk.invoke({
-    name: '/user@us.ibm.com_blog/blog_news/exec-query-find',
-    parameters:{
-      dbname: 'blog_news',
-      query:  {
-        "selector": {
-          "link": {
-            "$eq": params.link
-          }
-        },
-        "fields": [
-          "_id"
-        ],
-        "sort": [
-          {
-            "link": "desc"
-          }
-        ]
+// Cheerio module is used to parse the XML in the RSS feed.
+var cheerio = require("cheerio");
+
+function main(params) {
+  var url = params.url;
+
+  return new Promise(function(resolve, reject) {
+    request.get(url, function(error, response, body) {
+      if (error) {
+        reject(error);
       }
-    },
-    blocking: true,
-    next:  function(error, activation) {
-      console.log('error:', error, 'activation:', activation);
-      if(error){
-        whisk.error(error);
-      }
-      else{
-        if( activation.result.docs.length > 0 ) {
-          whisk.done({msg:'Link already present. Ignoring article.'});
-        }
-        else{
+      else {
+        // Parse the RSS Feed XML provided as a response body
+        $ = cheerio.load(body, {
+          normalizeWhitespace: true,
+          xmlMode: true
+        });
+
+        // Iterate over all RSS items in the feed.
+        $( "item" ).each(function(){
+          // Extract the title and link from the item in the RSS feed.
+          var title = $(this).find('title').text();
+          var link = $(this).find('link').text();
+          // Convert the item pubDate then calculate the timestamp in seconds since epoch.
+          var timestamp = Date.parse($(this).find('pubDate').text())/1000;
+
+          // Pass the parsed data onto append_article_description action
           whisk.invoke({
-            name: '/user@us.ibm.com_blog/blog_news/write',
+            name: '/boc@us.ibm.com_blog/append_article_description',
             parameters:{
-              dbname: 'blog_news',
-              doc: {
-                "title": params.title,
-                "link": params.link,
-                "excerpt": params.excerpt,
-                "timestamp": String(params.timestamp)
-              }
-            },
-            blocking: true,
-            next:  function(error, activation) {
-              console.log('error:', error, 'activation:', activation);
-              if(error){
-                whisk.error(error);
-              }
-              else{
-                whisk.done({msg:'Article added to Cloudant'});
-              }
+              "title": title,
+              "link": link,
+              "timestamp": timestamp
             }
           });
-          return whisk.async();
-        }
+
+        });
+        resolve({msg: 'done'});
       }
-    }
+    });
   });
-  return whisk.async();
+
 }
 {% endhighlight %}
 
-The nesting of the javascript makes this action look complicated, but the logic is fairly simple.
+# Append article description
 
-1. Action parameters are passed in with the params object.  This action uses title, link, excerpt and timestamp.
-2. Use an asynchronous whisk action to query Cloudant for any documents containing the link passed in as a parameter.
-3. If the results set contains 1 or more documents, end the Openwhisk chain with a call to whisk.done.  Otherwise invoke another asynchronous Cloudant whisk action to insert the article.
-4. Execute a whisk.done call after adding the article to Cloudant.
+A second action is used to download the article and inspect the metadata to extract the excerpt from the article.  The description supplied in the RSS item can have CDATA tags, linked to images, and other elements that are hard to parse and strip out from the text of the description.  The metadata for the article can be a more reliable, simpler source for the excerpt.
 
 
-## Create and upload the action to Openwhisk
-{% highlight shell %}
-./wsk action create insert_article insert_article.js
-ok: created action insert_article
+## Append Article Action Action
+
+The append article description action does the following
+
+1. Downloads and parses the RSS feed from the supplied URL.
+2. Extracts the title, link and calculates a timestamp
+3. Invokes the append_article_description action to create an article extract
+
+The contents of the rss action in its entirety:
+
+{% highlight javascript %}
+// Request module is used to download RSS feed
+var request = require('request');
+
+// Cheerio module is used to parse the XML in the RSS feed.
+var cheerio = require("cheerio");
+
+function main(params) {
+  var url = params.url;
+
+  return new Promise(function(resolve, reject) {
+    request.get(url, function(error, response, body) {
+      if (error) {
+        reject(error);
+      }
+      else {
+        // Parse the RSS Feed XML provided as a response body
+        $ = cheerio.load(body, {
+          normalizeWhitespace: true,
+          xmlMode: true
+        });
+
+        // Iterate over all RSS items in the feed.
+        $( "item" ).each(function(){
+          // Extract the title and link from the item in the RSS feed.
+          var title = $(this).find('title').text();
+          var link = $(this).find('link').text();
+          // Convert the item pubDate then calculate the timestamp in seconds since epoch.
+          var timestamp = Date.parse($(this).find('pubDate').text())/1000;
+
+          // Pass the parsed data onto append_article_description action
+          whisk.invoke({
+            name: '/boc@us.ibm.com_blog/append_article_description',
+            parameters:{
+              "title": title,
+              "link": link,
+              "timestamp": timestamp
+            }
+          });
+
+        });
+        resolve({msg: 'done'});
+      }
+    });
+  });
+
+}
 {% endhighlight %}
+
+
+## Create a file called append_article_description.js
+{% highlight shell %}
+vi append_article_description.js
+{% endhighlight %}
+
+
+
 
 <br>
 
