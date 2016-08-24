@@ -1,6 +1,6 @@
 ---
 title:  "Automating RSS Feeds Ingest"
-date:   2016-08-21 10:00:00 -0400
+date:   2016-08-24 10:00:00 -0400
 categories: blog bluemix Openwhisk chef puppet ansible
 excerpt: "Using Openwhisk to automatically parse RSS feeds"
 workflow:
@@ -24,9 +24,11 @@ multiple_news:
 <br>
 <br>
 
-# Automating RSS Feed Ingest with Openwhisk
+# RSS Feed Ingest with Openwhisk
 
-This is the fifth article in a series on how to use [GitHub pages](https://pages.github.com/) (the service that hosts this blog) and Cloudant on the [BlueMix PaaS](http://www.ibm.com/BlueMix) to create an automatically updating news section for a blog. This post will describe how to write code for Openwhisk to automatically update the news section of a blog.
+This is the fifth article in a series on how to use [GitHub pages](https://pages.github.com/) (the service that hosts this blog) and Cloudant on the [BlueMix PaaS](http://www.ibm.com/BlueMix) to create an automatically updating news section for a blog.
+
+This post will describe how to write code for Openwhisk to automatically update the news section of a blog.
 
 ## Previous Articles
 
@@ -48,21 +50,21 @@ This post will tie all the work of the previous posts together resulting in a ne
 ## Remaining Steps
 
 1. Create Openwhisk action to parse RSS feeds
-2. Create Openwhisk action to parse article description from meta tags and invoke insert article whisk action
+2. Create Openwhisk action to extract article description from meta tags and invoke insert article whisk action
 3. Configure an Openwhisk trigger to periodically invoke RSS feed action
 
 <br>
 
 # Parsing RSS Feeds
 
-Creating the first Openwhisk action was described in detail in [this post]({% post_url 2016-08-17-news-openwhisk-uniq %}).  In this post we will create another Openwhisk action that will trigger the insert_article action once for every article in the RSS feed.
+Creating the first Openwhisk action was described in detail in [this post]({% post_url 2016-08-17-news-openwhisk-uniq %}).  In this post we will create another Openwhisk action that will invoke the append_article_description action once for every article in the RSS feed.
 
 ## RSS Action
 
 The RSS action does the following
 
-1. Downloads and parses the RSS feed from the supplied URL.
-2. Extracts the title, link and calculates a timestamp
+1. Downloads and parses the RSS feed from the URL supplied as a parameter
+2. Extracts the title, link and calculates a timestamp since epoch
 3. Invokes the append_article_description action to create an article extract
 
 The contents of the rss action in its entirety:
@@ -118,7 +120,13 @@ function main(params) {
 
 # Append article description
 
-A second action is used to download the article and inspect the metadata to extract the excerpt from the article.  The description supplied in the RSS item can have CDATA tags, linked to images, and other elements that are hard to parse and strip out from the text of the description.  The metadata for the article can be a more reliable, simpler source for the excerpt.
+A second action is used to download the article and inspect the metadata to extract the excerpt from the article.
+
+You may be wondering?
+
+> Why don't we just use the description filed in the item RSS?
+
+Because The description supplied in the RSS item can have CDATA tags, linked to images, and other elements that are hard to parse and strip out from the text of the description.  The metadata for the article is a more reliable simpler source for the excerpt.
 
 
 ## Append Article Description Action Action
@@ -188,7 +196,9 @@ var url = params.link;
 
 # Manually invoke news feed update
 
-Invoke the created rss action, passing it a URL of a news feed to parse.  In the example below the news feed for the [Chef Blog](https://blog.chef.io/) is used.
+Invoke the created rss action, passing it a URL of a news feed to parse.
+
+In the example below the news feed for the [Chef Blog](https://blog.chef.io/) is used.
 {% highlight shell %}
 ./wsk action invoke --blocking rss --param url 'https://blog.chef.io/feed/'
 ok: invoked /user@us.ibm.com_blog/rss with id 219a76cf92aa40b5bad643e2e70088dd
@@ -249,17 +259,19 @@ ok: created trigger chef_news_trigger
 
 ## Trigger mapping
 
-The trigger defined above will run once a day.  The next step is to map what happens when that trigger fires.  To accomplish that we use [Openwhisk Rules](https://console.ng.bluemix.net/docs/openwhisk/openwhisk_triggers_rules.html#openwhisk_rules_use).
+The trigger defined above will run once a day.  The next step is to map what happens when that trigger fires.  To create that mapping a [Openwhisk Rules](https://console.ng.bluemix.net/docs/openwhisk/openwhisk_triggers_rules.html#openwhisk_rules_use) are used.
 
-The following creates a rule alled the chef_news_rule that maps a firing of the chef_news_trigger to the rss action.
+The following creates a rule called the chef_news_rule that maps a firing of the chef_news_trigger to the rss action.
 {% highlight shell %}
 ./wsk rule create --enable chef_news_rule chef_news_trigger rss
 ok: created rule chef_news_rule
 {% endhighlight %}
 
 With that rule created, the next time that trigger fires the news section will be automatically updated.
-For a variety of news sources, we will add more rules.  This time added [ansible](https://www.ansible.com/) and [puppet](https://puppet.com/).
-In this example note that we spread out the trigger time to update the news sources throughout the day, advancing each trigger by an hour.
+
+For this blog, I want a variety of news sources, so I will add more rules.  I am adding [ansible](https://www.ansible.com/) and [puppet](https://puppet.com/) news feeds.
+
+I do spread out the trigger time to update the news sources throughout the day, advancing each trigger by an hour.
 
 {% highlight shell %}
 ./wsk trigger create ansible_news_trigger --feed /whisk.system/alarms/alarm --param cron '0 0 2 * * *' --param trigger_payload '{"url":"https://www.ansible.com/blog/rss.xml"}'
