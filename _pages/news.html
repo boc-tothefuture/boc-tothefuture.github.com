@@ -56,6 +56,13 @@ $.ajax({
         $('<br>').appendTo("#result");
         $("#result").append($('<img>', {src: '/images/news/' + value.sentiment.type + '.jpg'}));
         $('<br>').appendTo("#result");
+
+        concepts = JQuery.map( value.concepts, function(concept, index ){
+          return concept.text;
+        });
+        
+        $( "#result" ).append( "Concepts: " + concepts.join(", ") );
+
         $('<br>').appendTo("#result");
       });
   }
