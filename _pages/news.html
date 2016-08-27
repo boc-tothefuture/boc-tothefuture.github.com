@@ -57,7 +57,7 @@ $.ajax({
         $("#result").append($('<img>', {src: '/images/news/' + value.sentiment.type + '.jpg'}));
         $('<br>').appendTo("#result");
 
-        concepts = JQuery.map( value.concepts, function(concept, index ){
+        concepts = jQuery.map( value.concepts, function(concept, index ){
           return concept.text;
         });
 
