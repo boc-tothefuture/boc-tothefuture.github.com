@@ -60,7 +60,11 @@ $.ajax({
         concepts = JQuery.map( value.concepts, function(concept, index ){
           return concept.text;
         });
-        
+
+        console.log("Concepts!");
+        console.log(concepts);
+        console.log("yo");
+
         $( "#result" ).append( "Concepts: " + concepts.join(", ") );
 
         $('<br>').appendTo("#result");
