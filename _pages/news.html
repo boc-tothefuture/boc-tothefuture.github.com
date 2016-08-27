@@ -54,7 +54,7 @@ $.ajax({
         $('<br>').appendTo("#result");
         $( "#result" ).append( "<i>" +  DateFormat.format.prettyDate(new Date(1000*value.timestamp).getTime()) + "</i>" );
         $('<br>').appendTo("#result");
-        $("#result").append($('<img>',src: value.sentiment.type + '.jpg'}))
+        $("#result").append($('<img>', {src: value.sentiment.type + '.jpg'}));
         $('<br>').appendTo("#result");
         $('<br>').appendTo("#result");
       });
