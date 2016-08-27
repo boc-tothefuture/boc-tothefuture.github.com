@@ -35,7 +35,7 @@ This post will describe how to write code for Openwhisk to automatically update 
 1. [Setting up Cloudant]({% post_url 2016-08-10-news-setting-up-cloudant %})
 2. [Dynamic GitHub pages]({% post_url 2016-08-10-news-setting-up-cloudant %})
 3. [Mixing in Openwhisk]({% post_url 2016-08-16-news-openwhisk-setup %})
-3. [A unique flow in Openwhisk]({% post_url 2016-08-17-news-openwhisk-uniq %})
+4. [A unique flow in Openwhisk]({% post_url 2016-08-17-news-openwhisk-uniq %})
 
 <br>
 
