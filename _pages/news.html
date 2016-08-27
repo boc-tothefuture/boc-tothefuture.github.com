@@ -61,11 +61,15 @@ $.ajax({
           return concept.text;
         });
 
-        console.log("Concepts!");
-        console.log(concepts);
-        console.log("yo");
-
         $( "#result" ).append( "Concepts: " + concepts.join(", ") );
+        $('<br>').appendTo("#result");
+
+        keywords = jQuery.map( value.keywords, function(keyword, index ){
+          return keyword.text;
+        });
+
+        $( "#result" ).append( "Keywords: " + keywords.join(", ") );
+        $('<br>').appendTo("#result");
 
         $('<br>').appendTo("#result");
       });
