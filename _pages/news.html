@@ -23,7 +23,10 @@ var query = {
     "title",
     "link",
     "timestamp",
-    "excerpt"
+    "excerpt",
+    "sentiment",
+    "keywords",
+    "concepts"
   ],
   "sort": [
     {
@@ -51,6 +54,7 @@ $.ajax({
         $('<br>').appendTo("#result");
         $( "#result" ).append( "<i>" +  DateFormat.format.prettyDate(new Date(1000*value.timestamp).getTime()) + "</i>" );
         $('<br>').appendTo("#result");
+        $( "#result" ).append( value.sentiment.type );
         $('<br>').appendTo("#result");
       });
   }
