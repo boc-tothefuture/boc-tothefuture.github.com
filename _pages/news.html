@@ -54,52 +54,26 @@ $.ajax({
         $('<br>').appendTo("#result");
         $( "#result" ).append( value.excerpt );
         $('<br>').appendTo("#result");
-        $('<table>').appendTo("#result");
 
-        $('<tr>').appendTo("#result");
-        $('<td>').appendTo("#result");
-        $('Published').appendTo("#result");
-        $('</td>').appendTo("#result");
-        $('<td>').appendTo("#result");
-        $( "#result" ).append( DateFormat.format.prettyDate(new Date(1000*value.timestamp).getTime()) );
-        $('</td>').appendTo("#result");
-        $('</tr>').appendTo("#result");
+        var $table = $('<table/>');
 
-        $('<tr>').appendTo("#result");
-        $('<td>').appendTo("#result");
-        $("#result").append("Sentiment");
-        $('</td>').appendTo("#result");
-        $('<td>').appendTo("#result");
-        $("#result").append($('<img>', {src: '/images/news/' + value.sentiment.type + '.png'}));
-        $('</td>').appendTo("#result");
-        $('</tr>').appendTo("#result");
+        $table.append('<tr><td>' + 'Published' + '</td><td>' + DateFormat.format.prettyDate(new Date(1000*value.timestamp).getTime()) + '</td></tr>');
+
+        $table.append('<tr><td>' + 'Sentiment' + '</td><td>' + $('<img>', {src: '/images/news/' + value.sentiment.type + '.png'}).html + '</td></tr>');
 
         concepts = jQuery.map( value.concepts, function(concept, index ){
           return concept.text;
         });
 
-        $('<tr>').appendTo("#result");
-        $('<td>').appendTo("#result");
-        $('Concepts').appendTo("#result");
-        $('</td>').appendTo("#result");
-        $('<td>').appendTo("#result");
-        $( "#result" ).append( concepts.join(", ") );
-        $('</td>').appendTo("#result");
-        $('</tr>').appendTo("#result");
+        $table.append('<tr><td>' + 'Concepts' + '</td><td>' +  concepts.join(", ") + '</td></tr>');
 
         keywords = jQuery.map( value.keywords, function(keyword, index ){
           return keyword.text;
         });
 
-        $('<tr>').appendTo("#result");
-        $('<td>').appendTo("#result");
-        $('Keywords').appendTo("#result");
-        $('</td>').appendTo("#result");
-        $('<td>').appendTo("#result");
-        $( "#result" ).append( keywords.join(", ") );
-        $('</td>').appendTo("#result");
-        $('</tr>').appendTo("#result");
-        $('</table>').appendTo("#result");
+        $table.append('<tr><td>' + 'Keywords' + '</td><td>' +  keywords.join(", ") + '</td></tr>');
+
+        $( "#result" ).append( $table );
 
         $('<br>').appendTo("#result");
       });
