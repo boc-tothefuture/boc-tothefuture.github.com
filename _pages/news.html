@@ -59,7 +59,7 @@ $.ajax({
 
         $table.append('<tr><td>' + 'Published' + '</td><td>' + DateFormat.format.prettyDate(new Date(1000*value.timestamp).getTime()) + '</td></tr>');
 
-        $table.append('<tr><td>' + 'Sentiment' + '</td><td>' + $('<img>', {src: '/images/news/' + value.sentiment.type + '.png'}).html + '</td></tr>');
+        $table.append('<tr><td>' + 'Sentiment' + '</td><td>' + '<img src="/images/news/' + value.sentiment.type + '.png">' + '</td></tr>');
 
         concepts = jQuery.map( value.concepts, function(concept, index ){
           return concept.text;
