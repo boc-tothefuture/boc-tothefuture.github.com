@@ -57,7 +57,7 @@ $.ajax({
         $( "#result" ).append( "<i>" +  DateFormat.format.prettyDate(new Date(1000*value.timestamp).getTime()) + "</i>" );
         $('<br>').appendTo("#result");
         $("#result").append("Sentiment: ");
-        $("#result").append($('<img>', {src: '/images/news/' + value.sentiment.type + '.jpg'}));
+        $("#result").append($('<img>', {src: '/images/news/' + value.sentiment.type + '.png'}));
         $('<br>').appendTo("#result");
 
         concepts = jQuery.map( value.concepts, function(concept, index ){
