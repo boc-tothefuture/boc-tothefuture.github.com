@@ -59,21 +59,21 @@ $.ajax({
         $table.css('border-collapse','collapse');
         $table.css('border','none');
 
-        $table.append('<tr><td>' + 'Published' + '</td><td>' + DateFormat.format.prettyDate(new Date(1000*value.timestamp).getTime()) + '</td></tr>');
+        $table.append('<tr><td style="border: none;">' + 'Published' + '</td><td style="border: none;">' + DateFormat.format.prettyDate(new Date(1000*value.timestamp).getTime()) + '</td></tr>');
 
-        $table.append('<tr><td>' + 'Sentiment' + '</td><td>' + '<img src="/images/news/' + value.sentiment.type + '.png">' + '</td></tr>');
+        $table.append('<tr><td style="border: none;">' + 'Sentiment' + '</td><td style="border: none;">' + '<img src="/images/news/' + value.sentiment.type + '.png">' + '</td></tr>');
 
         concepts = jQuery.map( value.concepts, function(concept, index ){
           return concept.text;
         });
 
-        $table.append('<tr><td>' + 'Concepts' + '</td><td>' +  concepts.join(", ") + '</td></tr>');
+        $table.append('<tr><td style="border: none;">' + 'Concepts' + '</td><td style="border: none;">' +  concepts.join(", ") + '</td></tr>');
 
         keywords = jQuery.map( value.keywords, function(keyword, index ){
           return keyword.text;
         });
 
-        $table.append('<tr><td>' + 'Keywords' + '</td><td>' +  keywords.join(", ") + '</td></tr>');
+        $table.append('<tr><td style="border: none;">' + 'Keywords' + '</td><td style="border: none;">' +  keywords.join(", ") + '</td></tr>');
 
         $( "#result" ).append( $table );
 
