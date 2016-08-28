@@ -54,25 +54,52 @@ $.ajax({
         $('<br>').appendTo("#result");
         $( "#result" ).append( value.excerpt );
         $('<br>').appendTo("#result");
-        $( "#result" ).append( "<i>" +  DateFormat.format.prettyDate(new Date(1000*value.timestamp).getTime()) + "</i>" );
-        $('<br>').appendTo("#result");
-        $("#result").append("Sentiment: ");
+        $('<table>').appendTo("#result");
+
+        $('<tr>').appendTo("#result");
+        $('<td>').appendTo("#result");
+        $('Published').appendTo("#result");
+        $('</td>').appendTo("#result");
+        $('<td>').appendTo("#result");
+        $( "#result" ).append( DateFormat.format.prettyDate(new Date(1000*value.timestamp).getTime()) );
+        $('</td>').appendTo("#result");
+        $('</tr>').appendTo("#result");
+
+        $('<tr>').appendTo("#result");
+        $('<td>').appendTo("#result");
+        $("#result").append("Sentiment");
+        $('</td>').appendTo("#result");
+        $('<td>').appendTo("#result");
         $("#result").append($('<img>', {src: '/images/news/' + value.sentiment.type + '.png'}));
-        $('<br>').appendTo("#result");
+        $('</td>').appendTo("#result");
+        $('</tr>').appendTo("#result");
 
         concepts = jQuery.map( value.concepts, function(concept, index ){
           return concept.text;
         });
 
-        $( "#result" ).append( "Concepts: " + concepts.join(", ") );
-        $('<br>').appendTo("#result");
+        $('<tr>').appendTo("#result");
+        $('<td>').appendTo("#result");
+        $('Concepts').appendTo("#result");
+        $('</td>').appendTo("#result");
+        $('<td>').appendTo("#result");
+        $( "#result" ).append( concepts.join(", ") );
+        $('</td>').appendTo("#result");
+        $('</tr>').appendTo("#result");
 
         keywords = jQuery.map( value.keywords, function(keyword, index ){
           return keyword.text;
         });
 
-        $( "#result" ).append( "Keywords: " + keywords.join(", ") );
-        $('<br>').appendTo("#result");
+        $('<tr>').appendTo("#result");
+        $('<td>').appendTo("#result");
+        $('Keywords').appendTo("#result");
+        $('</td>').appendTo("#result");
+        $('<td>').appendTo("#result");
+        $( "#result" ).append( keywords.join(", ") );
+        $('</td>').appendTo("#result");
+        $('</tr>').appendTo("#result");
+        $('</table>').appendTo("#result");
 
         $('<br>').appendTo("#result");
       });
