@@ -55,7 +55,8 @@ $.ajax({
         $( "#result" ).append( value.excerpt );
         $('<br>').appendTo("#result");
 
-        var $table = $('<table border="0"/>');
+        var $table = $('<table/>');
+        $table.attr("border","0");
 
         $table.append('<tr><td>' + 'Published' + '</td><td>' + DateFormat.format.prettyDate(new Date(1000*value.timestamp).getTime()) + '</td></tr>');
 
