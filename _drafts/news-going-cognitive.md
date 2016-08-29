@@ -18,6 +18,11 @@ cloudant_watson_document:
     image_path: news/cloudant_watson_document.jpg
     alt: "Cloudant document with Watson additions"
     title: "Cloudant document with Watson additions"
+cognitive_news:
+  - url: news/cognitive_news.jpg
+    image_path: news/cognitive_news.jpg
+    alt: "Blog news with cognitive insights"
+    title: "Blog news with cognitive insights"
 ---
 <br>
 ![News](/images/news/watson.jpg)
@@ -185,16 +190,90 @@ Once you update all your Openwhisk actions, your cloudants documents should have
 
 # Display cognitive insights
 
-The news page that was created [here]({% post_url 2016-08-15-news-dynamic-github-pages %}) heeds to be updated to display the Watson data now inserted into Cloudant.
+The news page that was created [here]({% post_url 2016-08-15-news-dynamic-github-pages %}) is updated to display the Watson data now inserted into Cloudant.  Below is the updated javascript necessary to display the cognitive news section.
+
+{% highlight javascript %}
+var query = {
+  "selector": {
+    "timestamp": {
+      "$gt": 0
+    }
+  },
+  "fields": [
+    "title",
+    "link",
+    "timestamp",
+    "excerpt",
+    "sentiment",
+    "keywords",
+    "concepts"
+  ],
+  "sort": [
+    {
+      "timestamp": "desc"
+    }
+  ]
+};
+
+$.ajax({
+  type: "POST",
+  url: "https://2619ca16-f337-42b9-b353-08009fcf31d7-bluemix.cloudant.com/blog_news/_find?limit=10",
+  headers: {"Authorization": "Basic aWNoZXR0ZWVkaWVyaW5nZXNvbWVuZXdoOmVjNGI3OWY0MDJmYzhmYzljNTY3MGI5NmVmMTM1OWMyZDgzNDJhNmM="},
+  data: JSON.stringify( query ),
+  contentType: "application/json; charset=utf-8",
+  dataType: "json",
+  success: function(data) {
+      $( "#result" ).empty();
+      $(data.docs).each(function (index, value) {
+        $('<a>',{
+          text: value.title,
+          href: value.link
+        }).appendTo( "#result" );
+        $('<br>').appendTo("#result");
+        $( "#result" ).append( value.excerpt );
+        $('<br>').appendTo("#result");
+
+        concepts = jQuery.map( value.concepts, function(concept, index ){
+          return concept.text;
+        });
+
+        keywords = jQuery.map( value.keywords, function(keyword, index ){
+          return keyword.text;
+        });
+
+        var elements = { 'Published' : DateFormat.format.prettyDate(new Date(1000*value.timestamp).getTime()),
+                         'Sentiment' : '<img src="/images/news/' + value.sentiment.type + '.png">',
+                         'Concepts' : concepts.join(", "),
+                         'Keywords' : keywords.join(", ")
+                       };
+
+        var $table = $('<table/>');
+        $table.css('border-collapse','collapse');
+        $table.css('border','none');
+        jQuery.each(elements, function (name, value) {
+          $table.append('<tr><td style="border: none;">' + name + '</td><td style="border: none;">' + value + '</td></tr>');
+        });
+
+        $( "#result" ).append( $table );
+
+        $('<br>').appendTo("#result");
+      });
+  }
+});
+
+{% endhighlight %}
+
+A few changes of note in the updated javascript.  
+
+* Cloudant is asked to return three additional fields: Sentiment, Concepts, Keywords
+* A dynamic table object without borders is created and inserted using [jQuery](https://jquery.com/)
+
+After those changes, the news page should look like the one below.
+
+{% include gallery id="cognitive_news" caption="News with cognitive insights" %}
 
 
-<br>
-
-After about a day the news page should be fully populated by a variety or sources.
-
-{% include gallery id="multiple_news" caption="Automatic news page with multiple sources" %}
-
-Enjoy your automatically updating serverless news page!
+That is it!  Using Bluemix with Watson services it's easy to add cognitive insight into your blog.  All without managing a single server.
 
 # Resources
 Should you run into any issues consult the [BlueMix Documentation](https://console.ng.bluemix.net/docs/), [Openwhisk Documentation](https://new-console.ng.bluemix.net/docs/openwhisk/index.html), [Cloudant Documentation](https://docs.cloudant.com/) or [reach out to me on twitter](https://twitter.com/boc_tothefuture)
