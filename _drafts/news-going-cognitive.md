@@ -24,6 +24,7 @@ cognitive_news:
     alt: "Blog news with cognitive insights"
     title: "Blog news with cognitive insights"
 ---
+
 <br>
 ![News](/images/news/watson.jpg)
 <br>
@@ -31,7 +32,7 @@ cognitive_news:
 
 # Watson Cognitive
 
-This is the sixth article in a series on how to use [GitHub pages](https://pages.github.com/) (the service that hosts this blog) and Cloudant on the [BlueMix PaaS](http://www.ibm.com/BlueMix) to create an automatically updating news section for a blog.
+This is the sixth article in a series on how to use [GitHub pages](https://pages.github.com/) (the service that hosts this blog) and [Cloudant](https://cloudant.com/) on the [BlueMix PaaS](http://www.ibm.com/BlueMix) to create an automatically updating news section for a blog.
 
 ## Previous Articles
 
@@ -41,8 +42,9 @@ This is the sixth article in a series on how to use [GitHub pages](https://pages
 4. [A unique flow in Openwhisk]({% post_url 2016-08-17-news-openwhisk-uniq %})
 5. [Automating RSS Feed Ingest]({% post_url 2016-08-24-news-auto-rss %})
 
+<br>
 
-This post will describe how to use the cognitive technologies of Watson with Openwhisk to automatically provide insight into the articles on a blog news page.
+This post describes how to use Openwhisk to access the cognitive technologies of Watson to automatically provide insights into the articles on a blog news page.
 
 ## Steps
 
@@ -61,17 +63,17 @@ Login into your BlueMix account [here](https://console.ng.bluemix.net/).  After 
 Select Alchemy API, leave the defaults values and click Create.
 After a few moments, the Watson Alchemy API service should be created and added to your Bluemix space.  
 
-Click on Service credentials on the left navigation and note your API key.
+Click on service credentials on the left navigation and note your API key.
 
 {% include gallery id="watson_credentials" caption="Watson credentials" %}
 
-That is it!  Your Bluemix space is now Watson enabled.
+Your Bluemix space is now Watson enabled.
 
 # Watson Openwhisk Action
 
 
 ## Create a new Openwhisk action
-This Openwhisk action the following
+This Openwhisk action does the following
 
 1. Sends a URL to the Alchemy API service
 2. Extract keywords, concepts, and document emotion
