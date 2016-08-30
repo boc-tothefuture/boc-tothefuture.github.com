@@ -1,6 +1,6 @@
 ---
 title:  "Going Cognitive with Blog News"
-date:   2016-08-27 10:00:00 -0400
+date:   2016-08-29 10:00:00 -0400
 categories: blog bluemix Openwhisk cognitive
 excerpt: "Using Watson to provide insight into news articles"
 watson_services:
@@ -23,6 +23,17 @@ cognitive_news:
     image_path: news/cognitive_news.jpg
     alt: "Blog news with cognitive insights"
     title: "Blog news with cognitive insights"
+workflow:
+  - url: news/workflow.jpg
+    image_path: news/workflow.jpg
+    alt: "Automatic news page workflow"
+    title: "Automatic news page workflow"
+workflow_cognitive:
+  - url: news/workflow_cognitive.jpg
+    image_path: news/workflow_cognitive.jpg
+    alt: "Automatic news page workflow with cognitive insights"
+    title: "Automatic news page workflow with cognitive insights"
+
 ---
 
 <br>
@@ -49,21 +60,24 @@ This post describes how to use Openwhisk to access the cognitive technologies of
 ## Steps
 
 1. Add Alchemy API to your Bluemix account
-2. Insert a new Openwhisk action in the news chain to append cognitive insights on news articles
+2. Insert a new Openwhisk action in the chain to extract cognitive insights on news articles
 3. Update front end code to display cognitive insights
 
 <br>
 
 # Add Alchemy API service to your Bluemix account
 
-Login into your BlueMix account [here](https://console.ng.bluemix.net/).  After you login, select catalog from the top navigation. On the left navigation bar select the checkbox next to Watson to limit the display to Watson services.  Your screen should look like the one below.
+Login into your BlueMix account [here](https://console.ng.bluemix.net/).  After you login, select catalog from the top navigation. On the left navigation bar select the checkbox next to Watson to limit the display to Watson services only.  Your screen should look like this:
 
 {% include gallery id="watson_services" caption="List of Watson services on Bluemix" %}
 
 Select Alchemy API, leave the defaults values and click Create.
 After a few moments, the Watson Alchemy API service should be created and added to your Bluemix space.  
 
-Click on service credentials on the left navigation and note your API key.
+Click on service credentials on the left navigation to find your API key.
+
+Note this API key, you will need it for your Openwhisk action.
+{: .notice--info}
 
 {% include gallery id="watson_credentials" caption="Watson credentials" %}
 
@@ -73,11 +87,11 @@ Your Bluemix space is now Watson enabled.
 
 
 ## Create a new Openwhisk action
-This Openwhisk action does the following
+This new Openwhisk action does the following
 
 1. Sends a URL to the Alchemy API service
-2. Extract keywords, concepts, and document emotion
-3. Appends watson insights to the article information
+2. Extracts keywords, concepts, and document emotion
+3. Appends Watson insights to the article information
 3. Invokes the insert action to insert the article
 
 The contents of the append_watson action in its entirety:
@@ -90,7 +104,7 @@ function main(params) {
 
 // Set the API Key from our Bluemix portal
 var alchemy_language = watson.alchemy_language({
-  api_key: '<YOUR KEY HERE>'
+  api_key: '<YOUR KEY YOU NOTED ABOVE HERE>'
 });
 
 var parameters = {
@@ -129,8 +143,15 @@ return new Promise(function(resolve, reject) {
 
 {% endhighlight %}
 
+## Openwhisk flow modification
+The previous workflow in Openwhisk looked like this:
+{% include gallery id="workflow" caption="Previous workflow" %}
+
+The new modified flow has the Watson Alchemy API action inserted:
+{% include gallery id="workflow_cognitive" caption="Workflow with new cognitive capabilities" %}
+
 ## Modify append article description action
-Previously, the append article description action invoked the insert article action.  To insert the append watson service into our chain of action we need to swap out the insert artcle whisk call for the append watson call.  
+[Previously]({% post_url 2016-08-17-news-openwhisk-uniq %}), the append article description action invoked the insert article action.  To insert the append Watson service into our chain of action we need to swap out the insert article whisk call for the append Watson call.  
 
 Just change this
 {% highlight javascript %}
@@ -162,9 +183,10 @@ to this
 {% endhighlight %}
 
 ## Modify insert article
-Previously, the insert article method was prescriptive in what parameters it put into the Cloudant doc.  To provide for more flexibility, we are now opening that up so that all parameters are now part of the document stored in Cloudant.
+[Previously]({% post_url 2016-08-17-news-openwhisk-uniq %}), the insert article method was prescriptive in the parameters it inserted into the Cloudant doc.  To provide for more flexibility, this change stores all supplied parameters in the Cloudant document.
 
 The updated Openwhisk action just passes the params object as the value for 'doc'
+
 {% highlight javascript %}
 whisk.invoke({
   name: '/user@us.ibm.com_blog/blog_news/write',
