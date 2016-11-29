@@ -11,7 +11,7 @@ excerpt: "Systematic approach to optimizing chef testing using Bluebox"
 <br>
 
 # Optimizing remote testing
-In a [previous article]({% post_url 2016-11-19-bluebox-testing %}) I laid out all the reasons to test remotely using Bluebox.  This post is going to focus on how to create a systematic approach to optimizing the test times for remote testing in bluebox.  
+A [previous article]({% post_url 2016-11-19-bluebox-testing %}) described all the reasons to test remotely using Bluebox.  This post is going to focus on how to create a systematic approach to optimizing the test times for remote testing in bluebox.  
 
 # Previous Articles
 
@@ -37,7 +37,7 @@ kitchen converge all -c
 
 Taking 18 minutes 9 seconds to 5 minutes, is a 72% reduction in test time. This is a very aggressive target, will require some thorough optimzation.
 
-Bluebox/Openstack can run tests concurrently, however I anticipate hitting some scaling issues with the tooling when attempting to run 18 concurrently. 
+Bluebox/Openstack can run tests concurrently, however I anticipate hitting some scaling issues with the tooling when attempting to run 18 concurrently.
 
 # Optimization strategy
 With a goal set, the next step in optimization is to break the problem down into different chunks that can be independenatly optimized.
@@ -86,7 +86,7 @@ kbb create cmusta-pre-RHEL7
 Creating the image takes 1 minutes and 22 seconds.
 
 ## Prepare
-Prepare is part of the converge process in test kitchen and is measured as the time between the start of the kitchen converge command and the execution of the first cookbook.  There is not a distinct command for test kitchen, therefore it will be measurd by looking at the log.
+Prepare is part of the converge process in test kitchen and is measured as the time between the start of the kitchen converge command and the execution of the first cookbook.  There is not a distinct command for test kitchen, therefore it will be measured by looking at the log.
 
 {% highlight console %}
 I, [2016-11-28T22:17:23.348451 #20655]  INFO -- cmusta-pre-RHEL6: -----> Converging <cmusta-pre-RHEL6>...
@@ -97,7 +97,7 @@ I, [2016-11-28T22:24:59.178576 #20655]  INFO -- cmusta-pre-RHEL6: Recipe: chef-s
 Prepare takes 7 minutes and 36 seconds.
 
 ## Converge
-The converge is measured by looking in the log and finding the start of the first cookbook until the last entry in the kitchen log.
+The converge is measured by looking in the log and finding the log statement that records the duration of the chef client run.
 
 {% highlight console %}
 I, [2016-11-28T22:34:34.315098 #20655]  INFO -- cmusta-pre-RHEL6: Chef Client finished, 467/842 resources updated in 10 minutes 14 seconds
@@ -162,7 +162,7 @@ This table summarize the test kitchen stages, we will refer to it throughout thi
 | Converge      | 10 minutes 14 seconds       |   52% |
 | Verify        | 11 seconds      |    1% |
 
-This series will optimize the testing process in the order of the kitchen stages.  Next up, will be create optimization.
+The approach we will take will be to optimize the testing process in the order of the kitchen stages.  Next up, will be create optimization.
 
 # Questions?
 [Reach out to me on twitter](https://twitter.com/boc_tothefuture)
