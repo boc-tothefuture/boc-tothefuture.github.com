@@ -162,7 +162,7 @@ This table summarize the test kitchen stages, we will refer to it throughout thi
 | Converge      | 10 minutes 14 seconds       |   52% |
 | Verify        | 11 seconds      |    1% |
 
-The approach we will take will be to optimize the testing process in the order of the kitchen stages.  Next up, will be create optimization.
+The approach we will take is to optimize the testing process in the order of the kitchen stages.  Next up, will be create optimization.
 
 # Questions?
 [Reach out to me on twitter](https://twitter.com/boc_tothefuture)
