@@ -177,10 +177,45 @@ The timeout was changed to zero and a new image was built and tested.
 | Image create  | 40s| 37% | 32s | 54% | 71%
 | OS Boot       | 69s| 63% | 13s | 81% | 29%
 
+
 While this is an image optimization, the improvement shows up in the image create section because it reduces the time between image create request and the first log message in /var/log/messages.  The total time for the create stage is down to 45 seconds.  Almost half the original measurement.
 
+## Remove unnecessary services
+Inspecting systemd-analyze blame a few services pop up as potentially causing some slowness during boot.  
+{% highlight console %}
+systemd-analyze blame | head
+         5.426s cloud-init.service
+         4.995s NetworkManager-wait-online.service
+         3.043s kdump.service
+         2.079s postfix.service
+          860ms lvm2-monitor.service
+          852ms systemd-udev-settle.service
+          783ms cloud-init-local.service
+          692ms cloud-config.service
+          641ms lvm2-pvscan@252:2.service
+          555ms network.service
+{% endhighlight %}
+
+NetworkManager-wait-online and cloud-init.service is a candidate for optimization.  The NetworkManager-wait-online service is important in some situations to prevent the system from booting before the network is fully online.  In this particular use case, sshd is well behaved enough to not need it.
+
+Prior to uploading the image, we use virt-customize to mask the NetworkManager-wait-online service to remove it from the startup.
+{% highlight console %}
+#Disable wait online for test nodes
+virt-customize --no-network --run-command 'systemctl mask NetworkManager-wait-online.service' -a "$1"
+{% endhighlight %}
+
+## Optimize cloud-init
+The cloud-init service is averaging around 5.5 seconds during boot.  Inspecting, the default config, cloud-init uses the EC2 service provider which is emulated in OpenStack.  Switching that to use the 'OpenStack' provider further optimized the boot time reducing the cloud-init.service to a 2 second start.
+
 # Summary
-System boot has been reduced to 13 seconds.  This is a 81% improvement from the start point.  The next article will focus on optimizing the image create portion of the kitchen create stage.
+
+| Stage         | Original Duration | Original % Total  | Optimized Duration| % Improvement | Optimized % total
+| ------------- | ------------- | ----- | ---- | ------ | ----- |
+| Image create  | 40s| 37% | 32s | 54% | 80%
+| OS Boot       | 69s| 63% | 8s | 88% | 20%
+
+
+Removing services and optimizing cloud-init reduced boot time to 8.4 seconds.  This is a 88% improvement from the start point.  The next article will focus on optimizing the image create portion of the kitchen create stage.
 
 # Questions?
 [Reach out to me on twitter](https://twitter.com/boc_tothefuture)
