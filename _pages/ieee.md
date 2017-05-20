@@ -4,11 +4,10 @@ layout: single
 permalink: /ieee/
 ---
 
-Want to learn how to build a world class infrastructure using DevOps principals and methods?
-
-Great! Because, that is what I have been working on for the past 3 years
+IEEE Publications
 
 <br>
-![Me](/images/about/wimbledon_venue.jpg)
+![Predictive Cloud Computing with Big Data: Professional Golf and Tennis Forecasting](http://ieeexplore.ieee.org/document/7160840/)
 <br>
+![Monitoring distributed systems: a publish/subscribe methodology and architecture](http://ieeexplore.ieee.org/document/1194162/)
 <br>
