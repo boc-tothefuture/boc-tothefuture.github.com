@@ -7,6 +7,8 @@ permalink: /public-speaking/
 Public Speaking
 
 <br>
+[Predictive Cloud Analytics Drives an Exceptional Fan Experience](https://www.youtube.com/watch?v=3H5nLiIOLc4)
+<br>
 [IBM Edge2013: Building Your Cloud Strategy for Today and Tomorrow](https://youtu.be/QHo6RfjamI4?t=5425)
 <br>
 [Why Innovative Companies Need "Always On" in the Hybrid Cloud Era](https://youtu.be/454qj0xmPYQ)
