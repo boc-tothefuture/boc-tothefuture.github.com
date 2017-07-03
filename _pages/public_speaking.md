@@ -7,6 +7,8 @@ permalink: /public-speaking/
 Public Speaking
 
 <br>
+["Acing" Infrastructure Testing with Chef](https://www.youtube.com/watch?v=oCTDjcMALjw)
+<br>
 [Predictive Cloud Analytics Drives an Exceptional Fan Experience](https://www.youtube.com/watch?v=3H5nLiIOLc4)
 <br>
 [IBM Edge2013: Building Your Cloud Strategy for Today and Tomorrow](https://youtu.be/QHo6RfjamI4?t=5425)
