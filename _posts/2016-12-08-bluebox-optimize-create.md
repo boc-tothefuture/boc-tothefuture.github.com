@@ -27,7 +27,7 @@ The current duration for each stage.
 
 1. [Remote testing in Bluebox with Chef]({% post_url 2016-11-19-bluebox-testing %})
 2. [Optimization overview of Bluebox with Chef]({% post_url 2016-11-28-bluebox-optimizing %})
-2. [Optimizing boot]({% post_url 2016-11-29-bluebox-optimize-boot %})
+3. [Optimizing boot]({% post_url 2016-11-29-bluebox-optimize-boot %})
 
 
 
