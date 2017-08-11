@@ -32,7 +32,7 @@ The current duration for each stage.
 
 <br>
 # Kitchen Prepare
-The prepare stage of test kitchen executes a few required tasks before the installation.  Those tasks include:
+The prepare stage of test kitchen executes a few required tasks before the converge step.  Those tasks include:
 *  Installing chef client test server (if not installed or at the right level)
 *  Starting the chef zero server on the test server
 *  Uploading cookbooks
@@ -40,7 +40,15 @@ The prepare stage of test kitchen executes a few required tasks before the insta
 These steps all seem fairly simple, what is taking up seven and a half minutes?
 
 ## Installing Chef
-The image being tested against already has Chef installed at the same version that is run in production which is the same version that should be tested against in remotely. The .kitchen.yml file can be specified to validate the installed version matches the version you have specified, install the latest versions, etc.  In the test kitchen file being used, nothing was specified so this step is skipped.  This step isn't contributing to the lengthy prepare time.
+ The .kitchen.yml, can specify via the provisioner directive a version of chef to verify is installed or install if missing or not at the right level.  This is done using the product_name and product_version directives.  An example configuration to verify chef 13.0.118 is installed would look like this:
+{% highlight yaml %}
+ provisioner:
+   name: chef_zero
+   product_name: chef
+   product_version: 13.0.118
+{% endhighlight %}
+
+To optimize testing speed, the image being tested against already has Chef installed at the correct version, which is the same version that is running in production. The test kitchen file being used for these tests do not specify a product_name or product_version so this step is skipped. This step isn't contributing to the lengthy prepare time and there is nothing to further optimize.
 
 ## Start Chef-Zero
 What is Chef Zero?  According to the [readme](https://github.com/chef/chef-zero/blob/master/README.md)
@@ -48,10 +56,10 @@ What is Chef Zero?  According to the [readme](https://github.com/chef/chef-zero/
 ... <br>
 Because Chef Zero runs in memory, it's super fast and lightweight. This makes it perfect for testing against a "real" Chef Server without mocking the entire Internet.
 
-By definition, this should be quick to start and shouldn't be significantly contributing to the prepare time.
+This should be quick to start and shouldn't be significantly contributing to the prepare time. Nothing to optimize in this step.
 
 ## Uploading cookbooks
-The process of elimination has left us with only one likely culprit here.  Looking at the logs confirms the suspicion.
+The process of elimination has left us with only one likely culprit. Inspecting the logs confirms the suspicion.
 
 {% highlight shell %}
 Transferring files to <cloud-cmusta-prd-RHEL7>
@@ -61,9 +69,9 @@ D TIMING: scp async upload (Kitchen::Transport::Ssh) took (7m36.16s)
 
 The real question is why is it taking so long and why wasn't it an issue when testing locally? <br>
 
-The answer was a combination of the number of files being uploaded and the method used by test kitchen to upload the files.  Some of the role cookbooks have over 1,000 files and test kitchen uploads those one a time.  When the system is local, that is quick. However, with remote testing every one of those files transferred requires a lot of communication that is delayed because of the distance between the user and the remote testing location.  
+The answer is a combination of the number of files being uploaded and the method used by test kitchen to upload the files. Some of the role cookbooks have over 1,000 files and test kitchen uploads those one a time.  When the system is local, that is quick. However, with remote testing every one of those files transferred requires a lot of communication that is delayed because of the distance between the user and the remote testing location.  
 <br>
-What are the options?
+What are the options to resolve this?
 
 Test kitchen supports plugins and developers have contributed a wide array of plugins to enhance test kitchen.
 
@@ -92,16 +100,17 @@ D [rsync] Using fallback to upload /tmp/cloud-cmusta-prd-RHEL7-sandbox-20170507-
 D TIMING: scp async upload (Kitchen::Transport::Ssh)
 D TIMING: scp async upload (Kitchen::Transport::Ssh) took (0m0.91s)
 {% endhighlight %}
-Less than a second for the measured transport of over 1,000 files and the total time for this step is now decreased 3.4 seconds. A winner has emerged. If you are doing remote testing, then kitchen-sync can highly optimize your test process.
+Less than a second for the measured transport of over 1,000 files and the total time for this step is now decreased to 3.4 seconds. This process appears to be quicker than speedy-ssh because only a single connection and transfer is performed that includes all data types (cookbooks, roles, environments) needed for testing. A winner has emerged. If you are doing remote testing, then kitchen-sync can highly optimize your test process.
 
 # Summary
-With prepare optimization complete, the total time before converge starts is down to 25 seconds.
+
+The kitchen-sync plugin provides a huge performance improvement in the prepare phase:
 
 | Stage         | Original Duration | Original % Total  | Optimized Duration| % Improvement | Optimized % total
 | ------------- | ------------- | ----- | ---- | ------ | ----- |
 | Kitchen Prepare  | 7m36s | 41% | 3.4s | 99.25% | 1%
 
-The prepare stage is now just 1% of the total operation. It is important to minimize the number of round-trips required when using remote testing.
+With prepare optimization complete, the total time before converge starts is down to 25 seconds and the prepare stage is now just 1% of the total operation. The moral of the story here is that it is important to minimize the number of round-trips required when using remote testing.
 
 | Stage         | Duration (seconds)     | % Total  |
 | ------------- | ------------- | ----- |
