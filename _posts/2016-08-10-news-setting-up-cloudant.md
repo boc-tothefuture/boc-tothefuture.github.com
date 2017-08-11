@@ -5,22 +5,22 @@ categories: blog cloudant bluemix
 excerpt: "Setting up Cloudant in BlueMix"
 create_user:
   - url: news/create_user.jpg
-    image_path: news/create_user.jpg
+    image_path: images/news/create_user.jpg
     alt: "Create a Read-Only User"
     title: "Create a read only user in Cloudant"
 data_services:
   - url: news/bluemix_data_services.jpg
-    image_path: news/bluemix_data_services.jpg
+    image_path: images/news/bluemix_data_services.jpg
     alt: "BlueMix Data Services"
     title: "BlueMix Data Services"
 select_plan:
   - url: news/cloudant_plan.jpg
-    image_path: news/cloudant_plan.jpg
+    image_path: images/news/cloudant_plan.jpg
     alt: "Select a Cloudant plan"
     title: "Select a Cloudant plan"
 document_url:
   - url: news/document_url.jpg
-    image_path: news/document_url.jpg
+    image_path: images/news/document_url.jpg
     alt: "Determine document URL"
     title: "Determine document URL"
 ---

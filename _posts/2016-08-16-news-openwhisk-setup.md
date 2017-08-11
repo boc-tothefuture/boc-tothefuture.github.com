@@ -5,17 +5,17 @@ categories: blog cloudant bluemix Openwhisk
 excerpt: "Setup Openwhisk"
 openwhisk_setup:
   - url: news/openwhisk_setup.jpg
-    image_path: news/openwhisk_setup.jpg
+    image_path: images/news/openwhisk_setup.jpg
     alt: "Openwhisk setup"
     title: "Openwhisk setup instructions"
 cloudant_reader_writer:
   - url: news/cloudant_reader_writer.jpg
-    image_path: news/cloudant_reader_writer.jpg
+    image_path: images/news/cloudant_reader_writer.jpg
     alt: "Cloudant read and write user"
     title: "Cloudant read and write user"
 whisk_inserted_news:
   - url: news/whisk_inserted_news.jpg
-    image_path: news/whisk_inserted_news.jpg
+    image_path: images/news/whisk_inserted_news.jpg
     alt: "News documents created by whisk"
     title: "News documents created by whisk"
 ---

@@ -5,32 +5,32 @@ categories: swift openstack webserver
 excerpt: "Using Openstack Swift as a webserver"
 storage_services:
   - url: openstack/storage_services.jpg
-    image_path: openstack/storage_services.jpg
+    image_path: images/openstack/storage_services.jpg
     alt: "Storage services on Bluemix"
     title: "Storage services on Bluemix"
 storage_credentials:
   - url: openstack/storage_credentials.jpg
-    image_path: openstack/storage_credentials.jpg
+    image_path: images/openstack/storage_credentials.jpg
     alt: "Storage credentials on Bluemix"
     title: "Storage credentials on Bluemix"
 add_container:
   - url: openstack/add_container.jpg
-    image_path: openstack/add_container.jpg
+    image_path: images/openstack/add_container.jpg
     alt: "Add a container"
     title: "Add a container"
 name_container:
   - url: openstack/name_container.jpg
-    image_path: openstack/name_container.jpg
+    image_path: images/openstack/name_container.jpg
     alt: "Name the container"
     title: "Name the container"
 add_files:
   - url: openstack/add_files.jpg
-    image_path: openstack/add_files.jpg
+    image_path: images/openstack/add_files.jpg
     alt: "Add files to a container"
     title: "Add files to a container"
 files_added:
   - url: openstack/files_added.jpg
-    image_path: openstack/files_added.jpg
+    image_path: images/openstack/files_added.jpg
     alt: "Files added to container"
     title: "Files added to container"
 

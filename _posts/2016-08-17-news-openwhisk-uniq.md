@@ -5,22 +5,22 @@ categories: blog cloudant bluemix Openwhisk
 excerpt: "Filtering unique news posts for a blog with Openwhisk"
 duplicate_posts:
   - url: news/duplicate_posts.jpg
-    image_path: news/duplicate_posts.jpg
+    image_path: images/news/duplicate_posts.jpg
     alt: "Duplicate news posts"
     title: "Duplicate news posts"
 cloudant_index:
   - url: news/cloudant_index.jpg
-    image_path: news/cloudant_index.jpg
+    image_path: images/news/cloudant_index.jpg
     alt: "Create a Cloudant index"
     title: "Create a Cloudant index"
 cloudant_create_index:
   - url: news/cloudant_create_link_index.jpg
-    image_path: news/cloudant_create_link_index.jpg
+    image_path: images/news/cloudant_create_link_index.jpg
     alt: "Create the link index"
     title: "Create a link index"  
 no_duplicate_posts:
   - url: news/no_duplicate_posts.jpg
-    image_path: news/no_duplicate_posts.jpg
+    image_path: images/news/no_duplicate_posts.jpg
     alt: "No duplicate news posts"
     title: "No duplicate news posts"
 ---

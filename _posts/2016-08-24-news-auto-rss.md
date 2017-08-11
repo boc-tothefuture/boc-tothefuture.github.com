@@ -5,17 +5,17 @@ categories: blog bluemix Openwhisk chef puppet ansible
 excerpt: "Using Openwhisk to automatically parse RSS feeds"
 workflow:
   - url: news/workflow.jpg
-    image_path: news/workflow.jpg
+    image_path: images/news/workflow.jpg
     alt: "Automatic news page workflow"
     title: "Automatic news page workflow"
 chef_news:
   - url: news/chef_news.jpg
-    image_path: news/chef_news.jpg
+    image_path: images/news/chef_news.jpg
     alt: "Automatic news page with Chef blog items added"
     title: "Automatic news page workflow with Chef blog items added"
 multiple_news:
   - url: news/multiple_news.jpg
-    image_path: news/multiple_news.jpg
+    image_path: images/news/multiple_news.jpg
     alt: "Automatic news page with multiple news sources"
     title: "Automatic news page workflow with multiple news sources"
 ---

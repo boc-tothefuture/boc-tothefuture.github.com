@@ -5,32 +5,32 @@ categories: blog bluemix Openwhisk cognitive
 excerpt: "Using Watson to provide insight into news articles"
 watson_services:
   - url: news/watson_services.jpg
-    image_path: news/watson_services.jpg
+    image_path: images/news/watson_services.jpg
     alt: "Watson services on Bluemix"
     title: "Watson services on Bluemix"
 watson_credentials:
   - url: news/watson_credentials.jpg
-    image_path: news/watson_credentials.jpg
+    image_path: images/news/watson_credentials.jpg
     alt: "Alchemy API credentials on Bluemix"
     title: "Alchemy API credentials on Bluemix"
 cloudant_watson_document:
   - url: news/cloudant_watson_document.jpg
-    image_path: news/cloudant_watson_document.jpg
+    image_path: images/news/cloudant_watson_document.jpg
     alt: "Cloudant document with Watson additions"
     title: "Cloudant document with Watson additions"
 cognitive_news:
   - url: news/cognitive_news.jpg
-    image_path: news/cognitive_news.jpg
+    image_path: images/news/cognitive_news.jpg
     alt: "Blog news with cognitive insights"
     title: "Blog news with cognitive insights"
 workflow:
   - url: news/workflow.jpg
-    image_path: news/workflow.jpg
+    image_path: images/news/workflow.jpg
     alt: "Automatic news page workflow"
     title: "Automatic news page workflow"
 workflow_cognitive:
   - url: news/workflow_cognitive.jpg
-    image_path: news/workflow_cognitive.jpg
+    image_path: images/news/workflow_cognitive.jpg
     alt: "Automatic news page workflow with cognitive insights"
     title: "Automatic news page workflow with cognitive insights"
 

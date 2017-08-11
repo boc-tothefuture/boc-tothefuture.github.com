@@ -5,27 +5,27 @@ categories: blog cloudant bluemix
 excerpt: "Use Cloudant in Bluemix for dynamic news section of a GitHub pages Blog"
 cloudant_cors:
   - url: news/cloudant_cors.jpg
-    image_path: news/cloudant_cors.jpg
+    image_path: images/news/cloudant_cors.jpg
     alt: "CORS page for Cloudant"
     title: "Default CORS page for Cloudant"
 cors_added_domain:
   - url: news/cors_added_domain.jpg
-    image_path: news/cors_added_domain.jpg
+    image_path: images/news/cors_added_domain.jpg
     alt: "CORS page for Cloudant with domain added"
     title: "CORS page with domain added"
 cloudant_index:
   - url: news/cloudant_index.jpg
-    image_path: news/cloudant_index.jpg
+    image_path: images/news/cloudant_index.jpg
     alt: "Create a Cloudant index"
     title: "Create a Cloudant index"
 cloudant_create_index:
   - url: news/cloudant_create_index.jpg
-    image_path: news/cloudant_create_index.jpg
+    image_path: images/news/cloudant_create_index.jpg
     alt: "Create the timestamp index"
     title: "Create a timestamp index"
 news_page:
   - url: news/news_page.jpg
-    image_path: news/news_page.jpg
+    image_path: images/news/news_page.jpg
     alt: "News page"
     title: "News page"
 ---
