@@ -1,5 +1,5 @@
 ---
-title:  "Optimize kichen converge Chef"
+title:  "Optimize kitchen converge Chef"
 date:   2017-08-24 12:00:00 -0400
 categories: openstack chef
 excerpt: "Optimize kitchen converge with remote testing"
@@ -33,49 +33,108 @@ The current duration for each stage.
 5. [Optimizing prepare]({% post_url 2017-08-06-optimize-prepare %})
 
 <br>
-# Kitchen Prepare
-The prepare stage of test kitchen executes a few required tasks before the converge step.  Those tasks include:
-*  Installing chef client test server (if not installed or at the right level)
-*  Starting the chef zero server on the test server
-*  Uploading cookbooks
+# Kitchen Converge
+The converge stage of test kitchen executes the specified chef recipes on the test node.  This is the stage that should, in most instances, take the longest. Converge has two distinct segments:
+*  Cookbook resolution
+*  Chef Run
 
-These steps all seem fairly simple, what is taking up seven and a half minutes?
+## Cookbook resolution
+This stage resolves all of the cookbooks and their dependencies.  Depending on the number of dependencies this can consume up to 60 seconds of the converge run. I may attempt to optimize the stage at a later time, but for now I have not made any changes.
 
-## Installing Chef
- The .kitchen.yml, can specify via the provisioner directive a version of chef to verify is installed or install if missing or not at the right level.  This is done using the product_name and product_version directives.  An example configuration to verify chef 13.0.118 is installed would look like this:
-{% highlight yaml %}
- provisioner:
-   name: chef_zero
-   product_name: chef
-   product_version: 13.0.118
+## Chef run optimization strategy
+It is not feasible to cover every potential optimization path for all cookbooks as those optimizations are heavily dependent on what the cookbook is trying to accomplish.  Below are several generic optimization recommendations.
+
+## Package everything
+I recommend using [fpm-cookery](https://github.com/bernd/fpm-cookery) to create system native package for everything installed by Chef. This includes repackaging of complex binary installers, arbitrary small binary file like security keys, and system packages. Basically, anything that is not a configuration file should be contained in a system package. This speeds up binary installers, which sometimes need a jvm to start, etc and prevents having to write complex custom guards to determine if actions are necessary. Additionally, for YUM based systems, after the initial caching of the YUM data Chef can very quickly make decisions if the package is already installed at the right level.
+
+### FPM Cookery Example
+Below is a quick example of using FPM cookery to build a system package for a product that initially required a more complex Chef resource to manage. The examples consists of two parts, a [vagrant](https://www.vagrantup.com/) file for creating a virtual machine and the [fpm-cookery](https://github.com/bernd/fpm-cookery) recipe.
+
+#### Vagrant File
+Below is a sample Vagrant File to use in FPM Cookery
+
+{% highlight ruby %}
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+RHEL_PLATFORMS = %w(6 7).freeze
+
+def fpm_script(rhel_version)
+  <<-SCRIPT
+mkdir -p /tmp/fpm-temp
+mkdir -p /tmp/fpm-cache
+cd build/recipes
+sudo fpm-cook clean --tmp-root /tmp/fpm-temp --cache-dir /tmp/fpm-cache --pkg-dir /home/vagrant/build/pkg/#{rhel_version}
+sudo fpm-cook install-deps
+sudo fpm-cook package --tmp-root /tmp/fpm-temp --cache-dir /tmp/fpm-cache --pkg-dir /home/vagrant/build/pkg/#{rhel_version}
+SCRIPT
+end
+
+Vagrant.configure(2) do |config|
+  RHEL_PLATFORMS.each do |rhel_version|
+    config.vm.define box_name(rhel_version) do |build|
+      build.vm.box = box_name(rhel_version)
+
+      build.vm.provider 'virtualbox' do |vb|
+        vb.customize ['modifyvm', :id, '--memory', '2048']
+        vb.linked_clone = true
+      end
+      build.vm.synced_folder 'recipes/', '/home/vagrant/build/recipes'
+      build.vm.synced_folder 'stage/', '/home/vagrant/build/stage'
+      build.vm.synced_folder 'pkg', '/home/vagrant/build/pkg/'
+
+      build.vm.provision 'chef_solo' do |chef|
+        chef.add_recipe 'ei-build'
+        chef.add_recipe 'ei-java'
+      end
+      build.vm.provision 'shell', inline: fpm_script(rhel_version)
+    end
+  end
+
+  config.berkshelf.enabled = true
+end
 {% endhighlight %}
 
-To optimize testing speed, the image being tested against already has Chef installed at the correct version, which is the same version that is running in production. The test kitchen file being used for these tests do not specify a product_name or product_version so this step is skipped. This step isn't contributing to the lengthy prepare time and there is nothing to further optimize.
+The above vagrant file creates a new RPM for both RHEL 6 and 7 platforms.  The work of calling FPM cookery to create the RPM is done by the script definition at the top.  The vagrant configuration iterates over both the RHEL 6 and 7 platform, creates a new virtual machine, links the appropriate directories, executes two sets of chef recipes the ei-build cookbook that installs most dependencies for building images and a java installation which is required for this particular build.  After the dependencies are installed, the fpm_script defined above is invoked.
 
-## Start Chef-Zero
-What is Chef Zero?  According to the [readme](https://github.com/chef/chef-zero/blob/master/README.md)
-> Chef Zero is a simple, easy-install, in-memory Chef server that can be useful for Chef Client testing and chef-solo-like tasks that require a full Chef Server. <br>
-... <br>
-Because Chef Zero runs in memory, it's super fast and lightweight. This makes it perfect for testing against a "real" Chef Server without mocking the entire Internet.
+#### FPM Cookery Recipe
+Below is an example FPM Cookery recipe
 
-This should be quick to start and shouldn't be significantly contributing to the prepare time. Nothing to optimize in this step.
+{% highlight ruby %}
+class UcdAgent < FPM::Cookery::Recipe
+  source File.join('/home/vagrant/build/stage/', 'ibm-ucd-agent.zip'), :with => :local_path
+  omnibus_package true
+  omnibus_dir '/opt/ibm-ucd/agent'
 
-## Uploading cookbooks
-The process of elimination has left us with only one likely culprit. Inspecting the logs confirms the suspicion.
+  name 'ucd-agent'
+  version '1:6.2.4.0'
+  revision '3'
+  arch 'x86_64'
+  vendor 'ei'
+  description 'IBM Urbancode Deploy Agent'
+  config_files '/opt/ibm-ucd/agent/conf/agent/installed.properties'
+  replaces 'IBMUrbancodeDeployAgent'
+  depends 'ei-java-cryptography-extension'
 
-{% highlight shell %}
-Transferring files to <cloud-cmusta-prd-RHEL7>
-D TIMING: scp async upload (Kitchen::Transport::Ssh)
-D TIMING: scp async upload (Kitchen::Transport::Ssh) took (7m36.16s)
+  def build
+    FileUtils.chmod 0755, Dir.glob(File.join(builddir, ' /opt/ibm-ucd/agent/opt/udclient/udclient'))
+  end
+
+  def install
+    install_props_source = File.join(workdir, 'ei.agent.install.properties')
+    install_props_dest = File.join(builddir, 'ibm-ucd-agent', 'ibm-ucd-agent-install')
+    FileUtils.cp(install_props_source, install_props_dest)
+    environment.with_clean { safesystem('sudo ./ibm-ucd-agent-install/install-agent-from-file.sh ./ei.agent.install.properties') }
+  end
+end
 {% endhighlight %}
 
-The real question is why is it taking so long and why wasn't it an issue when testing locally? <br>
+This is a multi-platform recipe used to create the RPM for the Urbancode Deploy Agent.  FPM Cookery, and the underlying [FPM](https://github.com/jordansissel/fpm) application abstract away the usually painful process of creating packages.  This is all the code necessary to build the package.  The recipe has a few distinct sections.  The very first sections are a DSL in FPM-Cookery that describe inforation about how to make the paackage and some metadata for when the package is created.  The source section, tells FPM-Cookery to grab the file in that path and uncompress it.  The omnibus directives tell FPM-Cookery to use the contents of the specified directory as the location to put into the package.  The name through depends identifiers are metadata that is passed onto the package itself.  Next, FPM-Cookery calls the build and install methods.  The build methods changes the permissions on files.  The install method prepares a properties file to be used with the installer and then calls the installer.  This executes the actual install.  When it is complete, FPM-Cookery calls FPM to package up the contents of /opt/ibm-ucd-agent and the package is created.
 
-The answer is a combination of the number of files being uploaded and the method used by test kitchen to upload the files. Some of the role cookbooks have over 1,000 files and test kitchen uploads those one a time.  When the system is local, that is quick. However, with remote testing every one of those files transferred requires a lot of communication that is delayed because of the distance between the user and the remote testing location.  
-<br>
-What are the options to resolve this?
+It only takes a handful of lines of code to repeatably create packages.
 
-Test kitchen supports plugins and developers have contributed a wide array of plugins to enhance test kitchen.
+What are the benefits of doing this? Our environment uses UrbanCode deploy on every node.  Every Chef role converge would need to install this package. How much time does this save?  Running the install above via a chef resource took about 30 seconds, the equivalent yum install takes less than 2 seconds. Some of larger packages like IBM Tivoli Monitoring went from 5+ minutes to under 50 seconds.
+
 
 ## speedy-ssh
 One of those plugins is called [speedy-ssh](https://github.com/criteo/kitchen-transport-speedy)
