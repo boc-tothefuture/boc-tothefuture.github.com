@@ -136,51 +136,60 @@ It only takes a handful of lines of code to repeatably create packages.
 What are the benefits of doing this? Our environment uses UrbanCode deploy on every node.  Every Chef role converge would need to install this package. How much time does this save?  Running the install above via a chef resource took about 30 seconds, the equivalent yum install takes less than 2 seconds. Some of larger packages like IBM Tivoli Monitoring went from 5+ minutes to under 50 seconds.
 
 
-## speedy-ssh
-One of those plugins is called [speedy-ssh](https://github.com/criteo/kitchen-transport-speedy)
-> This gem is transport plugin for kitchen. It signicantly improves file synchronization between workstation and boxes using archive transfer instead of individual transfers.
-The transport only works where ssh works and requires tar to be present both on the workstation and in the box.
+## yum-cache
+Many recipes will install packages, if they system is RedHat - YUM is the package manager of choice.  When Chef encounters a package statement, it uses yum to install those package.  The first thing yum will do is download all yum repo data and then create the cache.  
 
-This gem takes all cookbooks, creates a tar file, uploads it, connects to the remote machine and untars the file. Then it repeats the same process for roles, data bags, etc.  This should take the number of unique file transfers from the local machine to the remote test machine from over a 1,000 to a few.  
-{% highlight shell %}
-D  /tmp/cloud-cmusta-prd-RHEL7-sandbox-20170507-15058-185i7ay/cookbooks contains 1146
-D  Calling regular upload for /tmp/cloud-cmusta-prd-RHEL7-sandbox-20170507-15058-185i7ay/cookbooks.tar to /tmp/kitchen
-D  TIMING: scp async upload (Kitchen::Transport::Ssh)
-D  TIMING: scp async upload (Kitchen::Transport::Ssh) took (0m1.32s)
+{% highlight bash %}
+/usr/bin/time -f "%E elapsed" yum makecache
+
+...
+
+Metadata Cache Created
+
+0:14.95 elapsed
 {% endhighlight %}
-Cookbooks now take 1.32 seconds, a huge improvement.  The total process takes around 5.6 seconds as it is repeated for the different data types that are uploaded to remote test server.  5.6s would be an acceptable improvement, but there are a few other plugins worth testing.
 
-## kitchen-sync
-The next plugin evaluated is [kitchen-sync](https://github.com/coderanger/kitchen-sync). This plugin supports two modes, sftp and rsync. The fastest mode is rsync.
->This is the fastest mode, but it does have a few downsides. The biggest is that you must be using ssh-agent and have an identity loaded for it to use. It also requires that rsync be available on the remote side.
+That operation can take close to 15 seconds to complete.  
+You can take advantage of the fact that the system is started while test-kitchen is uploading cookbooks in the prepare stage to pre-warm the YUM cache.  This is best done using the 'at' command inside of cloud-init.  The reason to use at is that the at job will immediately exit and run the job in the background.  If 'at' was not used cloud-init would delay the boot process until the yum cache was created, negating any potential gains.
 
-The setup being tested has ssh-agent and an identity file loaded, making this a viable option.
-{% highlight shell %}
- [rsync] Time taken to upload /tmp/cloud-cmusta-prd-RHEL7-sandbox-20170507-13159-163maoo/cookbooks;/tmp/cloud-cmusta-prd-RHEL7-sandbox-20170507-13159-163maoo/nodes;/tmp/cloud-cmusta-prd-RHEL7-sandbox-20170507-13159-163maoo/data_bags to vagrant@10.0.0.136<{:user_known_hosts_file=>"/dev/null", :paranoid=>false, :port=>22, :compression=>true, :compression_level=>9, :keepalive=>true, :keepalive_interval=>60, :timeout=>15, :keys_only=>true, :keys=>["/home/path/key/key_rsa"], :auth_methods=>["publickey"], :user=>"vagrant"}>:/tmp/kitchen: 2.52 sec
-D [rsync] Using fallback to upload /tmp/cloud-cmusta-prd-RHEL7-sandbox-20170507-13159-163maoo/cache;/tmp/cloud-cmusta-prd-RHEL7-sandbox-20170507-13159-163maoo/dna.json;/tmp/cloud-cmusta-prd-RHEL7-sandbox-20170507-13159-163maoo/client.rb;/tmp/cloud-cmusta-prd-RHEL7-sandbox-20170507-13159-163maoo/validation.pem
-D TIMING: scp async upload (Kitchen::Transport::Ssh)
-D TIMING: scp async upload (Kitchen::Transport::Ssh) took (0m0.91s)
+The cloud init configuration looks like this:
+
+{% highlight bash %}
+write_files:
+  - path: /tmp/yum_makecache
+    owner: root:root
+    permissions: '0644'
+    content: |
+     # Create the yum cache - this will run in parallel while SSH is starting and chef is transferring cookbooks, etc.
+     yum makecache
+
+
+runcmd:
+  - 'at now -M -f /tmp/yum_makecache'
+
 {% endhighlight %}
-Less than a second for the measured transport of over 1,000 files and the total time for this step is now decreased to 3.4 seconds. This process appears to be quicker than speedy-ssh because only a single connection and transfer is performed that includes all data types (cookbooks, roles, environments) needed for testing. A winner has emerged. If you are doing remote testing, then kitchen-sync can highly optimize your test process.
+
+This update to the cloud-init file saves about 15 seconds off every converge.
+
 
 # Summary
 
-The kitchen-sync plugin provides a huge performance improvement in the prepare phase:
+Package optimization and yum-cache enhancements provide a measurable performance improvement in the converge phase:
 
 | Stage         | Original Duration | Original % Total  | Optimized Duration| % Improvement | Optimized % total
 | ------------- | ------------- | ----- | ---- | ------ | ----- |
-| Kitchen Prepare  | 7m36s | 41% | 3.4s | 99.25% | 1%
+| Kitchen Converge  | 10 minutes 14 seconds | 95% | 6 minutes 59 seconds | 31.76% | 92%
 
-With prepare optimization complete, the total time before converge starts is down to 25 seconds and the prepare stage is now just 1% of the total operation. The moral of the story here is that it is important to minimize the number of round-trips required when using remote testing.
+With converge optimization complete, 15 seconds is reduced from every converge by using the cloud-init optimization for yum cache creation. Using packages through the fpm-cookery method saves additional time. One item, that is not captured quantitatively, is the move to remote testing will often help with data-locally.  In this example, all packages are stored in Object Storage which is local to the cloud region, enable rapid download of all packages, that helps with converge time.
 
 | Stage         | Duration (seconds)     | % Total  |
 | ------------- | ------------- | ----- |
 | Create        | 20 seconds  | 1% |
 | Prepare       | 3.4 seconds     |   1% |
-| Converge      | 10 minutes 14 seconds       |   95% |
+| Converge      | 6 minutes 59 seconds       |   92% |
 | Verify        | 11 seconds      |    2% |
 
-Next up for optimization? Converge.
+Next up for optimization? Verify.
 
 # Questions?
 [Reach out to me on twitter](https://twitter.com/boc_tothefuture)
