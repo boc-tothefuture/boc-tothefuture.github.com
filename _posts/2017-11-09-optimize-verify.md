@@ -1,5 +1,5 @@
 ---
-title:  "Optimize kitchen Verify with Chef"
+title:  "Optimize kitchen verify with Chef"
 date:   2017-11-09 12:00:00 -0400
 categories: openstack chef
 excerpt: "Optimize kitchen verify with remote testing"
