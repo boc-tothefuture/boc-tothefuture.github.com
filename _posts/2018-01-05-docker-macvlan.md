@@ -111,7 +111,7 @@ default         firewall.aocboc 0.0.0.0         UG    0      0        0 macvlan0
 10.0.0.0        *               255.255.255.0   U     0      0        0 macvlan0
 {% endhighlight %}
 
-Note how all routing is now going through the macvlan interface.
+Note how all traffic is now going through the macvlan interface.
 
 # Configure macvlan for docker
 
@@ -153,7 +153,7 @@ With the new Macvlan network, a few changes are needed to configure the containe
      {% raw %}  "--ip={{ lookup('dig', 'sage.aocboc.') }}" {% endraw %}
 {% endhighlight %}
 
-The network name is changed to macnet, which is the Macvlan network constructed above.  Additionally, the ip is set by using the dig lookup to find the IP address for the container.
+The network name is changed to macnet, which is the Macvlan network constructed above.  Additionally, the IP is set by using the dig lookup to find the IP address for the container.
 
 # Summary
 
