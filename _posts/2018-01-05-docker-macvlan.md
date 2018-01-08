@@ -25,7 +25,7 @@ Recent versions Docker and linux kernels support another type of networking call
 This sounds great!  Every container gets its own IP, no more tedious port mappings, no cheat sheet describing which service utilizes which port. 
 
 # What is the catch?
-The catch is that the host the containers are running on, by default, cannot talk to any of the containers. The architectrual reasons for this are not really clear to me, the docker documentation says this:
+The catch is that the host the containers are running on, by default, cannot talk to any of the containers. The architectural reasons for this are not really clear to me, the docker documentation says this:
 > That traffic is explicitly filtered by the kernel modules themselves to offer additional provider isolation and security.
 
 It certainly does provide isolation! An isolation that is not very useful for me. I need my host to talk to the containers for multple reasons. I have some services in containers and others are running on the host and they need to commmunicate. 
