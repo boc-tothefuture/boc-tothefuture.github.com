@@ -48,7 +48,7 @@ The steps to enable communication between all devices on the subnet, the hosts, 
 
 # Simplify the physical adapter
 
-This was my original configuraiton for the adapter:
+This was my original configuration for the adapter:
 
 {% highlight shell %}
 auto ens32
