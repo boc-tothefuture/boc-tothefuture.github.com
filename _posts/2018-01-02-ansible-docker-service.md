@@ -133,7 +133,7 @@ systemctl status sagetv_container
 
 # Summary
 
-Reusing the ansible service role and a few lines of YMAL makes it easy to install, configure and run docker containers as services.  
+Reusing the ansible service role and a few lines of YAML makes it easy to install, configure and run docker containers as services.  
 
 
 # Questions?
